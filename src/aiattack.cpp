@@ -517,33 +517,7 @@ bool AiAttack_IsAttackProfitable(UnitInfo* friendly_unit, UnitInfo* enemy_unit, 
 }
 
 void AiAttack_GetTargetTeams(uint16_t team, bool* teams) {
-    if (ini_get_setting(INI_OPPONENT) >= OPPONENT_TYPE_AVERAGE) {
-        int16_t target_team;
-
-        memset(teams, 0, PLAYER_TEAM_MAX * sizeof(bool));
-
-        teams[PLAYER_TEAM_ALIEN] = true;
-
-        target_team = AiPlayer_Teams[team].GetTargetTeam();
-
-        if (target_team >= PLAYER_TEAM_RED) {
-            teams[target_team] = true;
-        }
-
-        for (target_team = PLAYER_TEAM_RED; target_team < PLAYER_TEAM_MAX - 1; ++target_team) {
-            if (UnitsManager_TeamInfo[target_team].team_type == TEAM_TYPE_PLAYER ||
-                UnitsManager_TeamInfo[target_team].team_type == TEAM_TYPE_REMOTE) {
-                teams[target_team] = true;
-
-            } else if (UnitsManager_TeamInfo[target_team].team_type == TEAM_TYPE_COMPUTER &&
-                       AiPlayer_Teams[target_team].GetTargetTeam() == team) {
-                teams[target_team] = true;
-            }
-        }
-
-    } else {
-        memset(teams, 1, PLAYER_TEAM_MAX * sizeof(bool));
-    }
+    memset(teams, 1, PLAYER_TEAM_MAX * sizeof(bool));
 }
 
 SpottedUnit* AiAttack_SelectTargetToAttack(UnitInfo* unit, int32_t range, int32_t scan, int32_t caution_level,
