@@ -2217,11 +2217,11 @@ Task* AiPlayer::FindManager(Point site) {
         task_list.PushBack(*task);
         TaskManager.AppendTask(*task);
 
-        defense_reserve_task = new (std::nothrow) TaskDefenseReserve(player_team, site);
-        TaskManager.AppendTask(*defense_reserve_task);
+        //defense_reserve_task = new (std::nothrow) TaskDefenseReserve(player_team, site);
+        //TaskManager.AppendTask(*defense_reserve_task);
 
-        attack_reserve_task = new (std::nothrow) TaskAttackReserve(player_team, site);
-        TaskManager.AppendTask(*attack_reserve_task);
+        //attack_reserve_task = new (std::nothrow) TaskAttackReserve(player_team, site);
+        //TaskManager.AppendTask(*attack_reserve_task);
     }
 
     return &*task;
