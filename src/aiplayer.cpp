@@ -2520,8 +2520,8 @@ void AiPlayer::BeginTurn() {
                 }
             }
 
-            SmartPointer<Task> mine_assistant(new (std::nothrow) TaskMineAssistant(player_team));
-            TaskManager.AppendTask(*mine_assistant);
+            //SmartPointer<Task> mine_assistant(new (std::nothrow) TaskMineAssistant(player_team));
+            //TaskManager.AppendTask(*mine_assistant);
 
             SmartPointer<Task> update_terrain(new (std::nothrow) TaskUpdateTerrain(player_team));
             TaskManager.AppendTask(*update_terrain);
