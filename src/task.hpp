@@ -54,7 +54,7 @@ enum : uint8_t {
     TaskType_TaskManageBuildings = 21,
     TaskType_TaskFrontierAssistant = 22,
     TaskType_TaskMove = 23,
-    TaskType_TaskMoveHome = 24,
+    TaskType_TaskMoveHome = 24, //attack and defense reserves
     TaskType_TaskObtainUnits = 25,
     TaskType_TaskPlaceMines = 26,
     TaskType_TaskConnectionAssistant = 27,
