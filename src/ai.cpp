@@ -136,7 +136,7 @@ void Ai_SetTasksPendingFlag(const char* event) {
 
 void Ai_BeginTurn(uint16_t team) {
     if (UnitsManager_TeamInfo[team].team_type == TEAM_TYPE_COMPUTER) {
-        AiPlayer_Teams[team].BeginTurn();
+        //AiPlayer_Teams[team].BeginTurn();
     }
 }
 
