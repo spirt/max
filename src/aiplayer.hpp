@@ -199,6 +199,7 @@ public:
     void FileSave(SmartFileWriter& file);
     void FileLoad(SmartFileReader& file);
     void ChooseUpgrade(SmartObjectArray<BuildOrder> build_orders1, SmartObjectArray<BuildOrder> build_orders2);
+    int32_t GetUnitCount() const;
 };
 
 int32_t AiPlayer_CalculateProjectedDamage(UnitInfo* friendly_unit, UnitInfo* enemy_unit, int32_t caution_level);

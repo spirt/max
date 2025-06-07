@@ -885,7 +885,7 @@ bool TaskManageBuildings::EvaluateSite(uint16_t** construction_map, ResourceID u
 
 bool TaskManageBuildings::FindSite(ResourceID unit_type, TaskCreateBuilding* task, Point& site, uint16_t task_flags) {
     uint16_t** construction_map = CreateMap();
-    int32_t unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? 3 : 1;
+    int32_t unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? 3 : 2;
     bool result;
 
     AiLog log("Find Site.");
@@ -1439,7 +1439,7 @@ void TaskManageBuildings::ClearAreasNearBuildings(uint8_t** access_map, int32_t 
             if (unit_type != CNCT_4W && unit_type != WTRPLTFM && unit_type != BRIDGE) {
                 Rect limits;
 
-                unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? area_expanse : 1;
+                unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? area_expanse : 2;
 
                 (*it).GetBounds(&limits);
 
@@ -2666,7 +2666,7 @@ bool TaskManageBuildings::FindDefenseSite(ResourceID unit_type, TaskCreateBuildi
         MarkDefenseSites(construction_map, access_map.GetMap(), task, value);
         ClearBuildingAreas(construction_map, task);
         ClearPlannedBuildings(construction_map, task, unit_type, task_flags);
-        LimitBlockSize(construction_map, 1);
+        LimitBlockSize(construction_map, 2);
 
         MouseEvent::ProcessInput();
 

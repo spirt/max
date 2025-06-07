@@ -2179,6 +2179,8 @@ uint16_t AiPlayer::GetField5() const { return field_5; }
 
 int8_t** AiPlayer::GetMineMap() { return mine_map; }
 
+int32_t AiPlayer::GetUnitCount() const { return air_force.GetCount() + ground_forces.GetCount(); }
+
 void AiPlayer::AddTransportOrder(TransportOrder* transport_order) { transport_orders.PushBack(*transport_order); }
 
 Task* AiPlayer::FindManager(Point site) {

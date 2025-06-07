@@ -269,6 +269,10 @@ int32_t Ai_DetermineCautionLevel(UnitInfo* unit) {
     if (unit->GetField221() & 1) {
         result = CAUTION_LEVEL_NONE;
 
+    } else if (AiPlayer_Teams[unit->team].GetUnitCount() >= 20) {
+        // If AI has accumulated at least 20 units, become more aggressive
+        result = CAUTION_LEVEL_NONE;
+
     } else if (unit->GetTask()) {
         result = unit->GetTask()->GetCautionLevel(*unit);
 
