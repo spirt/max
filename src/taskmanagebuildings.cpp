@@ -1487,6 +1487,26 @@ void TaskManageBuildings::EvaluateDangers(uint8_t** access_map) {
     }
 }
 
+bool TaskManageBuildings::IsPerimeterLocation(uint16_t** construction_map, Point site) {
+    // Check if any adjacent tile is AREA_FREE or higher (outside the building area)
+    for (int32_t direction = 0; direction < 8; direction += 2) {
+        Point adjacent = site;
+        adjacent.x += Paths_8DirPointsArray[direction].x;
+        adjacent.y += Paths_8DirPointsArray[direction].y;
+
+        // Check if the adjacent point is within map bounds
+        if (adjacent.x >= 0 && adjacent.x < ResourceManager_MapSize.x && 
+            adjacent.y >= 0 && adjacent.y < ResourceManager_MapSize.y) {
+            // If the adjacent tile is AREA_FREE or higher, this is a perimeter location
+            if (construction_map[adjacent.x][adjacent.y] >= AREA_FREE) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 void TaskManageBuildings::MarkDefenseSites(uint16_t** construction_map, uint8_t** access_map, TaskCreateBuilding* task,
                                            int32_t value) {
     AiLog log("Mark defense sites.");
@@ -1511,7 +1531,12 @@ void TaskManageBuildings::MarkDefenseSites(uint16_t** construction_map, uint8_t*
 
             for (site.x = bounds.ulx; site.x < bounds.lrx; ++site.x) {
                 for (site.y = bounds.uly; site.y < bounds.lry; ++site.y) {
-                    access_map[site.x][site.y] = accessmap_value;
+                    // Assign higher value to perimeter locations
+                    if (IsPerimeterLocation(construction_map, site)) {
+                        access_map[site.x][site.y] = accessmap_value + 2; // Perimeter gets higher priority
+                    } else {
+                        access_map[site.x][site.y] = accessmap_value;
+                    }
                 }
             }
         }
@@ -1537,7 +1562,12 @@ void TaskManageBuildings::MarkDefenseSites(uint16_t** construction_map, uint8_t*
 
                 for (site.x = bounds.ulx; site.x < bounds.lrx; ++site.x) {
                     for (site.y = bounds.uly; site.y < bounds.lry; ++site.y) {
-                        access_map[site.x][site.y] = accessmap_value;
+                        // Assign higher value to perimeter locations
+                        if (IsPerimeterLocation(construction_map, site)) {
+                            access_map[site.x][site.y] = accessmap_value + 2; // Perimeter gets higher priority
+                        } else {
+                            access_map[site.x][site.y] = accessmap_value;
+                        }
                     }
                 }
             }

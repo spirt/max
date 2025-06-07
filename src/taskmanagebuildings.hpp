@@ -68,6 +68,7 @@ class TaskManageBuildings : public Task {
     bool CheckNeeds();
     void ClearAreasNearBuildings(uint8_t** access_map, int32_t area_expanse, TaskCreateBuilding* task);
     void EvaluateDangers(uint8_t** access_map);
+    bool IsPerimeterLocation(uint16_t** construction_map, Point site);
     void MarkDefenseSites(uint16_t** construction_map, uint8_t** access_map, TaskCreateBuilding* task,
                           int32_t value);
     void ClearDefenseSites(uint8_t** access_map, ResourceID unit_type, TaskCreateBuilding* task,
