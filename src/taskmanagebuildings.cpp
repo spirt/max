@@ -885,7 +885,7 @@ bool TaskManageBuildings::EvaluateSite(uint16_t** construction_map, ResourceID u
 
 bool TaskManageBuildings::FindSite(ResourceID unit_type, TaskCreateBuilding* task, Point& site, uint16_t task_flags) {
     uint16_t** construction_map = CreateMap();
-    int32_t unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? 2 : 1;
+    int32_t unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? 3 : 1;
     bool result;
 
     AiLog log("Find Site.");

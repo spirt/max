@@ -727,24 +727,8 @@ int32_t BuildMenu_GetTurnsToBuild(ResourceID unit_type, uint16_t team) {
         turns_to_build = UnitsManager_GetCurrentUnitValues(team_info, unit_type)->GetAttribute(ATTRIB_TURNS);
 
         if (team_info->team_type == TEAM_TYPE_COMPUTER) {
-            switch (ini_get_setting(INI_OPPONENT)) {
-                case OPPONENT_TYPE_MASTER: {
-                    result = (turns_to_build * 4 + 2) / 5;
-                } break;
-
-                case OPPONENT_TYPE_GOD: {
-                    result = (turns_to_build * 2 + 1) / 3;
-                } break;
-
-                case OPPONENT_TYPE_CLUELESS: {
-                    result = (turns_to_build * 5) / 4;
-                } break;
-
-                default: {
-                    result = turns_to_build;
-                } break;
-            }
-
+            // Temporary hack: AI building construction always takes 1 turn
+            result = 1;
         } else {
             result = turns_to_build;
         }
