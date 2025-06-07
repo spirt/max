@@ -1327,7 +1327,7 @@ void draw_copyright_label(WindowInfo* window) {
 
     Text_TextBox(window->buffer, window->width,
                  "Copyright 1996 Interplay Productions. v1.04"
-                 "  (M.A.X. Port " GAME_VERSION_STRING
+                 "  (M.A.X. Port (S)" GAME_VERSION_STRING
 #if defined(GAME_VERSION_REVISION)
                  " Revision " GAME_VERSION_REVISION
 #elif defined(GAME_VERSION_USE_BUILD_TIME)

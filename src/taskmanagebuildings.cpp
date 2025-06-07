@@ -233,16 +233,10 @@ void TaskManageBuildings::MarkBuildingAreas(uint16_t** construction_map, int32_t
 
             (*it).GetBounds(&bounds);
 
-            // For small objects (1x1), mark a larger area as AREA_BLOCKED
-            if (bounds.lrx - bounds.ulx <= 1 && bounds.lry - bounds.uly <= 1) {
-                FillMap(construction_map, bounds.ulx - area_offset - 1, bounds.uly - area_offset - 1, bounds.lrx + 2,
-                        bounds.lry + 2, AREA_BLOCKED);
-            } else {
-                FillMap(construction_map, bounds.ulx - area_offset, bounds.uly - area_offset + 1, bounds.lrx + 1,
-                        bounds.lry, AREA_BLOCKED);
-                FillMap(construction_map, bounds.ulx - area_offset + 1, bounds.uly - area_offset, bounds.lrx,
-                        bounds.lry + 1, AREA_BLOCKED);
-            }
+            FillMap(construction_map, bounds.ulx - area_offset, bounds.uly - area_offset + 1, bounds.lrx + 1,
+                    bounds.lry, AREA_BLOCKED);
+            FillMap(construction_map, bounds.ulx - area_offset + 1, bounds.uly - area_offset, bounds.lrx,
+                    bounds.lry + 1, AREA_BLOCKED);
         }
     }
 
@@ -252,16 +246,10 @@ void TaskManageBuildings::MarkBuildingAreas(uint16_t** construction_map, int32_t
 
             (*it).GetBounds(&bounds);
 
-            // For small objects (1x1), mark a larger area as AREA_BLOCKED
-            if (bounds.lrx - bounds.ulx <= 1 && bounds.lry - bounds.uly <= 1) {
-                FillMap(construction_map, bounds.ulx - area_offset - 1, bounds.uly - area_offset - 1, bounds.lrx + 2,
-                        bounds.lry + 2, AREA_BLOCKED);
-            } else {
-                FillMap(construction_map, bounds.ulx - area_offset, bounds.uly - area_offset + 1, bounds.lrx + 1,
-                        bounds.lry, AREA_BLOCKED);
-                FillMap(construction_map, bounds.ulx - area_offset + 1, bounds.uly - area_offset, bounds.lrx,
-                        bounds.lry + 1, AREA_BLOCKED);
-            }
+            FillMap(construction_map, bounds.ulx - area_offset, bounds.uly - area_offset + 1, bounds.lrx + 1,
+                    bounds.lry, AREA_BLOCKED);
+            FillMap(construction_map, bounds.ulx - area_offset + 1, bounds.uly - area_offset, bounds.lrx,
+                    bounds.lry + 1, AREA_BLOCKED);
         }
     }
 }
@@ -897,7 +885,7 @@ bool TaskManageBuildings::EvaluateSite(uint16_t** construction_map, ResourceID u
 
 bool TaskManageBuildings::FindSite(ResourceID unit_type, TaskCreateBuilding* task, Point& site, uint16_t task_flags) {
     uint16_t** construction_map = CreateMap();
-    int32_t unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? 3 : 2;
+    int32_t unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? 2 : 1;
     bool result;
 
     AiLog log("Find Site.");
@@ -1451,7 +1439,7 @@ void TaskManageBuildings::ClearAreasNearBuildings(uint8_t** access_map, int32_t 
             if (unit_type != CNCT_4W && unit_type != WTRPLTFM && unit_type != BRIDGE) {
                 Rect limits;
 
-                unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? area_expanse : 2;
+                unit_size = (UnitsManager_BaseUnits[unit_type].flags & BUILDING) ? area_expanse : 1;
 
                 (*it).GetBounds(&limits);
 
@@ -2708,7 +2696,7 @@ bool TaskManageBuildings::FindDefenseSite(ResourceID unit_type, TaskCreateBuildi
         MarkDefenseSites(construction_map, access_map.GetMap(), task, value);
         ClearBuildingAreas(construction_map, task);
         ClearPlannedBuildings(construction_map, task, unit_type, task_flags);
-        LimitBlockSize(construction_map, 2);
+        LimitBlockSize(construction_map, 1);
 
         MouseEvent::ProcessInput();
 
