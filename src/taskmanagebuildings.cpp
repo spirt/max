@@ -233,10 +233,16 @@ void TaskManageBuildings::MarkBuildingAreas(uint16_t** construction_map, int32_t
 
             (*it).GetBounds(&bounds);
 
-            FillMap(construction_map, bounds.ulx - area_offset, bounds.uly - area_offset + 1, bounds.lrx + 1,
-                    bounds.lry, AREA_BLOCKED);
-            FillMap(construction_map, bounds.ulx - area_offset + 1, bounds.uly - area_offset, bounds.lrx,
-                    bounds.lry + 1, AREA_BLOCKED);
+            // For small objects (1x1), mark a larger area as AREA_BLOCKED
+            if (bounds.lrx - bounds.ulx <= 1 && bounds.lry - bounds.uly <= 1) {
+                FillMap(construction_map, bounds.ulx - area_offset - 1, bounds.uly - area_offset - 1, bounds.lrx + 2,
+                        bounds.lry + 2, AREA_BLOCKED);
+            } else {
+                FillMap(construction_map, bounds.ulx - area_offset, bounds.uly - area_offset + 1, bounds.lrx + 1,
+                        bounds.lry, AREA_BLOCKED);
+                FillMap(construction_map, bounds.ulx - area_offset + 1, bounds.uly - area_offset, bounds.lrx,
+                        bounds.lry + 1, AREA_BLOCKED);
+            }
         }
     }
 
@@ -246,10 +252,16 @@ void TaskManageBuildings::MarkBuildingAreas(uint16_t** construction_map, int32_t
 
             (*it).GetBounds(&bounds);
 
-            FillMap(construction_map, bounds.ulx - area_offset, bounds.uly - area_offset + 1, bounds.lrx + 1,
-                    bounds.lry, AREA_BLOCKED);
-            FillMap(construction_map, bounds.ulx - area_offset + 1, bounds.uly - area_offset, bounds.lrx,
-                    bounds.lry + 1, AREA_BLOCKED);
+            // For small objects (1x1), mark a larger area as AREA_BLOCKED
+            if (bounds.lrx - bounds.ulx <= 1 && bounds.lry - bounds.uly <= 1) {
+                FillMap(construction_map, bounds.ulx - area_offset - 1, bounds.uly - area_offset - 1, bounds.lrx + 2,
+                        bounds.lry + 2, AREA_BLOCKED);
+            } else {
+                FillMap(construction_map, bounds.ulx - area_offset, bounds.uly - area_offset + 1, bounds.lrx + 1,
+                        bounds.lry, AREA_BLOCKED);
+                FillMap(construction_map, bounds.ulx - area_offset + 1, bounds.uly - area_offset, bounds.lrx,
+                        bounds.lry + 1, AREA_BLOCKED);
+            }
         }
     }
 }
