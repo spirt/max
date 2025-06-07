@@ -48,14 +48,14 @@ int32_t ini_setting_victory_limit;
 
 static const IniKey ini_keys_table[] = {
     {"DEBUG", nullptr, INI_SECTION},
-    {"debug", "0", INI_NUMERIC},
+    {"debug", "1", INI_NUMERIC},
     {"all_visible", "0", INI_NUMERIC},
     {"disable_fire", "0", INI_NUMERIC},
-    {"quick_build", "0", INI_NUMERIC},
+    {"quick_build", "1", INI_NUMERIC},
     {"real_time", "0", INI_NUMERIC},
     {"exclude_range", "3", INI_NUMERIC},
     {"proximity_range", "14", INI_NUMERIC},
-    {"log_file_debug", "0", INI_NUMERIC},
+    {"log_file_debug", "1", INI_NUMERIC},
     {"raw_normal_low", "0", INI_NUMERIC},
     {"raw_normal_high", "5", INI_NUMERIC},
     {"raw_concentrate_low", "13", INI_NUMERIC},

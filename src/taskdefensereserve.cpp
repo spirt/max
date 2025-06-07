@@ -73,122 +73,26 @@ bool TaskDefenseReserve::IsAdjacentToWater(UnitInfo* unit) {
 }
 
 void TaskDefenseReserve::MoveFinishedCallback(Task* task, UnitInfo* unit, char result) {
-    if (result != TASKMOVE_RESULT_SUCCESS || !AiAttack_EvaluateAssault(unit, task, &MoveFinishedCallback)) {
-        if (unit->IsReadyForOrders(task)) {
-            dynamic_cast<TaskDefenseReserve*>(task)->SupportAttacker(unit);
-        }
-    }
+    // Don't do anything after a move is finished to prevent accumulating any forces in defense
+    return;
 }
 
 bool TaskDefenseReserve::SupportAttacker(UnitInfo* unit) {
-    bool result;
-
-    if (AiAttack_FollowAttacker(this, unit, 0x1800)) {
-        result = true;
-
-    } else {
-        SmartPointer<Task> move_home_task(new (std::nothrow) TaskMoveHome(unit, this));
-
-        TaskManager.AppendTask(*move_home_task);
-
-        result = true;
-    }
-
-    return result;
+    // Don't support attackers to prevent accumulating any forces in defense
+    return false;
 }
 
 TaskDefenseReserve::TaskDefenseReserve(uint16_t team_, Point site_) : Task(team_, nullptr, 0x1900) {
     int32_t ai_strategy = AiPlayer_Teams[team].GetStrategy();
     site = site_;
 
-    managers[DEFENSE_TYPE_BASIC_LAND].AddRule(ALNTANK, 1);
-    managers[DEFENSE_TYPE_BASIC_LAND].AddRule(GUNTURRT, 1);
-
-    if (ai_strategy != AI_STRATEGY_AIR && ai_strategy != AI_STRATEGY_FAST_ATTACK &&
-        ai_strategy != AI_STRATEGY_SCOUT_HORDE) {
-        managers[DEFENSE_TYPE_BASIC_LAND].AddRule(TANK, 12);
-    }
-
-    if (ai_strategy == AI_STRATEGY_ESPIONAGE) {
-        managers[DEFENSE_TYPE_BASIC_LAND].AddRule(COMMANDO, 4);
-    }
-
-    if (ai_strategy != AI_STRATEGY_TANK_HORDE) {
-        managers[DEFENSE_TYPE_BASIC_LAND].AddRule(BOMBER, 6);
-    }
-
-    managers[DEFENSE_TYPE_ADVANCED_LAND].AddRule(ALNASGUN, 1);
-    managers[DEFENSE_TYPE_ADVANCED_LAND].AddRule(ARTYTRRT, 1);
-    managers[DEFENSE_TYPE_ADVANCED_LAND].AddRule(ANTIMSSL, 1);
-
-    if (ai_strategy != AI_STRATEGY_MISSILES) {
-        managers[DEFENSE_TYPE_ADVANCED_LAND].AddRule(ARTILLRY, 4);
-    }
-
-    if (ai_strategy != AI_STRATEGY_FAST_ATTACK && ai_strategy != AI_STRATEGY_SCOUT_HORDE) {
-        managers[DEFENSE_TYPE_ADVANCED_LAND].AddRule(ROCKTLCH, 5);
-        managers[DEFENSE_TYPE_ADVANCED_LAND].AddRule(MISSLLCH, 10);
-    }
-
-    managers[DEFENSE_TYPE_LAND_ANTIAIR].AddRule(ANTIAIR, 1);
-
-    if (ai_strategy != AI_STRATEGY_FAST_ATTACK) {
-        managers[DEFENSE_TYPE_LAND_ANTIAIR].AddRule(FIGHTER, 12);
-    }
-
-    if (ai_strategy != AI_STRATEGY_AIR) {
-        managers[DEFENSE_TYPE_LAND_ANTIAIR].AddRule(SP_FLAK, 6);
-    }
-
-    managers[DEFENSE_TYPE_LAND_ANTIAIR].AddRule(ALNPLANE, 1);
-
-    managers[DEFENSE_TYPE_SEA_STEALTH].AddRule(CORVETTE, 12);
-
-    if (ai_strategy != AI_STRATEGY_AIR && ai_strategy != AI_STRATEGY_FAST_ATTACK &&
-        ai_strategy != AI_STRATEGY_SCOUT_HORDE) {
-        if (ai_strategy != AI_STRATEGY_TANK_HORDE) {
-            managers[DEFENSE_TYPE_BASIC_SEA].AddRule(SUBMARNE, 6);
-        }
-
-        managers[DEFENSE_TYPE_BASIC_SEA].AddRule(BATTLSHP, 6);
-    }
-
-    managers[DEFENSE_TYPE_BASIC_SEA].AddRule(GUNTURRT, 1);
-    managers[DEFENSE_TYPE_BASIC_SEA].AddRule(JUGGRNT, 1);
-
-    if (ai_strategy != AI_STRATEGY_SEA && ai_strategy != AI_STRATEGY_TANK_HORDE) {
-        managers[DEFENSE_TYPE_BASIC_SEA].AddRule(BOMBER, 6);
-    }
-
-    managers[DEFENSE_TYPE_ADVANCED_SEA].AddRule(MSSLBOAT, 20);
-    managers[DEFENSE_TYPE_ADVANCED_SEA].AddRule(ARTYTRRT, 1);
-    managers[DEFENSE_TYPE_ADVANCED_SEA].AddRule(ANTIMSSL, 1);
-
-    managers[DEFENSE_TYPE_SEA_ANTIAIR].AddRule(ANTIAIR, 1);
-
-    if (ai_strategy != AI_STRATEGY_AIR) {
-        managers[DEFENSE_TYPE_SEA_ANTIAIR].AddRule(FASTBOAT, 6);
-    }
-
-    if (ai_strategy != AI_STRATEGY_SEA && ai_strategy != AI_STRATEGY_FAST_ATTACK &&
-        ai_strategy != AI_STRATEGY_SCOUT_HORDE) {
-        managers[DEFENSE_TYPE_SEA_ANTIAIR].AddRule(FIGHTER, 12);
-    }
-
-    managers[DEFENSE_TYPE_SEA_ANTIAIR].AddRule(ALNPLANE, 1);
+    // All AddRule calls have been removed to prevent accumulating any forces in defense
 }
 
 TaskDefenseReserve::~TaskDefenseReserve() {}
 
 bool TaskDefenseReserve::IsUnitUsable(UnitInfo& unit) {
-    if (unit.GetBaseValues()->GetAttribute(ATTRIB_ROUNDS) > 0) {
-        for (int32_t i = 0; i < TASK_DEFENSE_MANAGER_COUNT; ++i) {
-            if (managers[i].IsUnitUsable(&unit)) {
-                return true;
-            }
-        }
-    }
-
+    // Don't consider any units usable for defense to prevent accumulating any forces in defense
     return false;
 }
 
@@ -201,156 +105,33 @@ char* TaskDefenseReserve::WriteStatusLog(char* buffer) const {
 uint8_t TaskDefenseReserve::GetType() const { return TaskType_TaskDefenseReserve; }
 
 void TaskDefenseReserve::AddUnit(UnitInfo& unit) {
-    for (int32_t i = 0; i < TASK_DEFENSE_MANAGER_COUNT; ++i) {
-        if (managers[i].AddUnit(&unit)) {
-            unit.AddTask(this);
-            unit.ScheduleDelayedTasks(false);
-
-            return;
-        }
-    }
+    // Don't add any units to defense to prevent accumulating any forces in defense
+    return;
 }
 
 void TaskDefenseReserve::BeginTurn() {
-    if (!IsScheduledForTurnEnd()) {
-        TaskManager.AppendReminder(new (std::nothrow) class RemindTurnEnd(*this));
-    }
+    // Don't schedule any end-of-turn actions to prevent accumulating any forces in defense
+    return;
 }
 
 void TaskDefenseReserve::EndTurn() {
-    SmartPointer<TaskObtainUnits> obtain_units_task;
-    int32_t unit_counts[UNIT_END];
-    uint16_t target_team;
-    int32_t total_assets_land;
-    int32_t total_assets_sea;
-    int32_t total_assets_air;
-    int32_t total_assets_stealth_land;
-    int32_t total_assets_stealth_sea;
-
-    memset(unit_counts, 0, sizeof(unit_counts));
-
-    target_team = AiPlayer_Teams[team].GetTargetTeam();
-
-    for (int32_t i = 0; i < TASK_DEFENSE_MANAGER_COUNT; ++i) {
-        managers[i].MaintainDefences(this);
-    }
-
-    obtain_units_task = new (std::nothrow) TaskObtainUnits(this, site);
-
-    total_assets_land = 0;
-    total_assets_sea = 0;
-
-    for (SmartList<UnitInfo>::Iterator it = UnitsManager_MobileLandSeaUnits.Begin();
-         it != UnitsManager_MobileLandSeaUnits.End(); ++it) {
-        if ((*it).team == team && ((*it).flags & BUILDING)) {
-            if (IsAdjacentToWater(&*it)) {
-                total_assets_sea += (*it).GetNormalRateBuildCost();
-
-            } else {
-                total_assets_land += (*it).GetNormalRateBuildCost();
-            }
-        }
-    }
-
-    for (SmartList<UnitInfo>::Iterator it = UnitsManager_StationaryUnits.Begin();
-         it != UnitsManager_StationaryUnits.End(); ++it) {
-        if ((*it).team == team) {
-            ++unit_counts[(*it).GetUnitType()];
-        }
-    }
-
-    ++unit_counts[AIRPLT];
-    ++unit_counts[LANDPLT];
-    ++unit_counts[LIGHTPLT];
-    ++unit_counts[SHIPYARD];
-    ++unit_counts[TRAINHAL];
-
-    for (int32_t i = 0; i < TASK_DEFENSE_MANAGER_COUNT; ++i) {
-        managers[i].EvaluateNeeds(unit_counts);
-    }
-
-    if (total_assets_land + total_assets_sea > 0) {
-        total_assets_air = 0;
-
-        for (SmartList<UnitInfo>::Iterator it = UnitsManager_MobileAirUnits.Begin();
-             it != UnitsManager_MobileAirUnits.End(); ++it) {
-            if ((*it).team == target_team && (*it).GetBaseValues()->GetAttribute(ATTRIB_ATTACK) > 0) {
-                total_assets_air += (*it).GetNormalRateBuildCost();
-            }
-        }
-
-        managers[DEFENSE_TYPE_LAND_ANTIAIR].PlanDefenses(
-            (total_assets_land * total_assets_air) / (total_assets_land + total_assets_sea), &*obtain_units_task,
-            unit_counts);
-
-        managers[DEFENSE_TYPE_SEA_ANTIAIR].PlanDefenses(
-            (total_assets_sea * total_assets_air) / (total_assets_sea + total_assets_land), &*obtain_units_task,
-            unit_counts);
-    }
-
-    total_assets_land = 0;
-    total_assets_sea = 0;
-    total_assets_stealth_land = 0;
-    total_assets_stealth_sea = 0;
-
-    for (SmartList<UnitInfo>::Iterator it = UnitsManager_MobileLandSeaUnits.Begin();
-         it != UnitsManager_MobileLandSeaUnits.End(); ++it) {
-        if ((*it).team == target_team && (*it).GetBaseValues()->GetAttribute(ATTRIB_ATTACK) > 0) {
-            if ((*it).GetUnitType() == COMMANDO) {
-                total_assets_stealth_land += (*it).GetNormalRateBuildCost();
-
-            } else if ((*it).GetUnitType() == SUBMARNE) {
-                total_assets_stealth_sea += (*it).GetNormalRateBuildCost();
-
-            } else if ((*it).flags & MOBILE_SEA_UNIT) {
-                total_assets_sea += (*it).GetNormalRateBuildCost();
-
-            } else {
-                total_assets_land += (*it).GetNormalRateBuildCost();
-            }
-        }
-    }
-
-    managers[DEFENSE_TYPE_LAND_STEALTH].PlanDefenses(total_assets_stealth_land, &*obtain_units_task, unit_counts);
-    managers[DEFENSE_TYPE_BASIC_LAND].PlanDefenses(total_assets_land / 2, &*obtain_units_task, unit_counts);
-    managers[DEFENSE_TYPE_ADVANCED_LAND].PlanDefenses(total_assets_land / 2, &*obtain_units_task, unit_counts);
-    managers[DEFENSE_TYPE_SEA_STEALTH].PlanDefenses(total_assets_stealth_sea, &*obtain_units_task, unit_counts);
-    managers[DEFENSE_TYPE_BASIC_SEA].PlanDefenses(total_assets_sea / 2, &*obtain_units_task, unit_counts);
-    managers[DEFENSE_TYPE_ADVANCED_SEA].PlanDefenses(total_assets_sea / 2, &*obtain_units_task, unit_counts);
-
-    TaskManager.AppendTask(*obtain_units_task);
+    // Don't maintain existing defenses or plan for new ones to prevent accumulating any forces in defense
+    // All MaintainDefences calls, asset calculations, PlanDefenses calls, and TaskObtainUnits creation have been removed
 }
 
 bool TaskDefenseReserve::Execute(UnitInfo& unit) {
-    bool result;
-
-    if (unit.speed > 0 && unit.IsReadyForOrders(this)) {
-        if (AiAttack_EvaluateAssault(&unit, this, &MoveFinishedCallback)) {
-            result = true;
-
-        } else {
-            result = SupportAttacker(&unit);
-        }
-
-    } else {
-        result = false;
-    }
-
-    return result;
+    // Don't execute any defense actions to prevent accumulating any forces in defense
+    return false;
 }
 
 void TaskDefenseReserve::RemoveSelf() {
-    for (int32_t i = 0; i < TASK_DEFENSE_MANAGER_COUNT; ++i) {
-        managers[i].ClearUnitsList();
-    }
-
+    // No need to clear unit lists since we're not adding any units
     parent = nullptr;
 
     TaskManager.RemoveTask(*this);
 }
 
 void TaskDefenseReserve::RemoveUnit(UnitInfo& unit) {
-    for (int32_t i = 0; i < TASK_DEFENSE_MANAGER_COUNT; ++i) {
-        managers[i].RemoveUnit(&unit);
-    }
+    // No need to remove units from defense managers since we're not adding any
+    return;
 }
